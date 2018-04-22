@@ -3,6 +3,7 @@
 #include <gecode/search.hh>
 #include <iostream>
 #include <fstream>
+#include <ctime>
 
 using namespace Gecode;
 using namespace std;
@@ -12,12 +13,13 @@ protected:
 	
 	IntVarArray x, y;
 	BoolVarArray rot;
-	IntVar L; // Paper length
 	int W;
 	int num_boxes = 0;
 	int max_L = 0;
 	vector<int> w, h;
 public:
+	IntVar L; // Paper length
+
 	Roll(Roll& s) : Space(s) {
 		//printf("%x \n", &L);
 		L.update(*this, s.L);
@@ -30,7 +32,7 @@ public:
 		w = s.w;
 		h = s.h;
 	}
-	Roll(void) {
+	Roll(int policy) {
 		cin >> W;
 
 		int n, lw, lh;
@@ -47,6 +49,9 @@ public:
 		}
 
 		int min_L = (int) ceil(((double) min_area) / W);
+
+		fprintf(stderr, "W = %d, L in [%d, %d], num_boxes = %d\n", 
+				W, min_L, max_L, num_boxes);
 
 		//for(int i = 0; i < num_boxes; i++) {
 		//	printf("%d %d\n", w[i], h[i]);
@@ -89,16 +94,63 @@ public:
 		}
 
 		Rnd r(1U);
+
+		//branch(*this, rot, BOOL_VAR_RND(r), BOOL_VAL_RND(r));
+		
+		branch(*this, rot, BOOL_VAR_RND(r), BOOL_VAL_MIN());
+
+
+
+
+		
+		switch (policy) {
+			case 1:
+				// GOOD
+				branch(*this, x, INT_VAR_SIZE_MIN(), INT_VAL_RND(r));
+				branch(*this, y, INT_VAR_SIZE_MIN(), INT_VAL_RND(r));
+				break;
+			default:
+				// MEH
+				branch(*this, x, INT_VAR_RND(r), INT_VAL_RND(r));
+				branch(*this, y, INT_VAR_RND(r), INT_VAL_RND(r));
+				break;
+		}
+
+
+
+		// BAD
+		//branch(*this, x, INT_VAR_SIZE_MIN(), INT_VAL_RANGE_MIN());
+		//branch(*this, y, INT_VAR_SIZE_MIN(), INT_VAL_RANGE_MIN());
+		
+		// BAD
+		//branch(*this, x, INT_VAR_SIZE_MIN(), INT_VAL_RANGE_MAX());
+		//branch(*this, y, INT_VAR_SIZE_MIN(), INT_VAL_RANGE_MAX());
+
+		// BAD
+		//branch(*this, y, INT_VAR_SIZE_MIN(), INT_VAL_RND(r));
+		//branch(*this, x, INT_VAR_SIZE_MIN(), INT_VAL_RND(r));
+
+		// VERY BAD
+		//branch(*this, x, INT_VAR_RND(r), INT_VAL_RANGE_MIN());
+		//branch(*this, y, INT_VAR_RND(r), INT_VAL_RANGE_MIN());
+
+		// Same as x and y
+		//branch(*this, x+y, INT_VAR_SIZE_MIN(), INT_VAL_RND(r));
+
+		// MEH
+		//branch(*this, x+y, INT_VAR_RND(r), INT_VAL_RND(r));
+
+
+
+
 		//branch(*this, x, INT_VAR_SIZE_MIN(), INT_VAL_RND(r));
 		//branch(*this, x, INT_VAR_RND(r), INT_VAL_MIN());
-		branch(*this, x+y, INT_VAR_RND(r), INT_VAL_RND(r));
-		//branch(*this, y, INT_VAR_RND(r), INT_VAL_RANGE_MIN());
+		//branch(*this, x+y, INT_VAR_RND(r), INT_VAL_RND(r));
 		//branch(*this, y, INT_VAR_RND(r), INT_VAL_MIN());
 		//branch(*this, y, INT_VAR_SIZE_MIN(), INT_VAL_RND(r));
 		//branch(*this, y, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
 		//branch(*this, y, INT_VAR_SIZE_MIN(), INT_VAL_RND(r));
 		//branch(*this, x+y, INT_VAR_RND(r), INT_VAL_RND(r));
-		branch(*this, rot, BOOL_VAR_RND(r), BOOL_VAL_RND(r));
 		branch(*this, L, INT_VAL_MIN());
 		//branch(*this, y, INT_VAR_RND(r), INT_VAL_RND(r));
 		//branch(*this, rot, BOOL_VAR_RND(r), BOOL_VAL_RND(r));
@@ -142,26 +194,37 @@ public:
 int main(int argc, char* argv[]) {
 
 	int time = 120; // 120 seconds by default
+	int policy = 1;
+	clock_t tic, toc;
+	double dt;
 
-	if (argc == 2)
+	if (argc >= 2)
 		time = atoi(argv[1]);
+	if (argc >= 3)
+		policy = atoi(argv[2]);
 
 	fprintf(stderr, "Time limit set to %d seconds\n", time);
+	fprintf(stderr, "Policy set to %d\n", policy);
 
-
-	Roll* m = new Roll();
+	Roll* m = new Roll(policy);
 	Search::Stop* stop = new Search::TimeStop(time * 1000);
 	Search::Options* o = new Search::Options();
 	o->stop = stop;
-	o->threads = 3;
+	o->threads = 2;
+
+	tic = clock();
 
 	//DFS<Roll> e(m);
+	
 	BAB<Roll> e(m, *o);
 	//delete m;
 	Roll *best = m;
 	while (Roll *s = e.next()) {
 		best = s;
-		best->status();
+		//best->status();
+		toc = clock();
+		dt = ((double) toc - tic) / CLOCKS_PER_SEC;
+		fprintf(stderr, "L = %d\tt = %.3f s\n", s->L.val(), dt);
 		//delete s;
 		//break;
 	}

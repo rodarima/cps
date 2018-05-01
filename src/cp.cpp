@@ -178,11 +178,11 @@ public:
 				cout << "\t\t";
 				cout << x[i] << " " << y[i];
 				cout << "\t";
-				cout << x[i].val() + h[i] << " " << y[i].val() + w[i] << endl;
+				cout << x[i].val() + h[i] - 1 << " " << y[i].val() + w[i] - 1 << endl;
 			} else {
 				cout << x[i] << " " << y[i];
 				cout << "\t";
-				cout << x[i].val() + w[i] << " " << y[i].val() + h[i] << endl;
+				cout << x[i].val() + w[i] - 1 << " " << y[i].val() + h[i] - 1 << endl;
 			}
 		}
 	}

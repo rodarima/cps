@@ -34,9 +34,9 @@ int main(int argc, char *argv[])
 		x1 = X[i];
 		y1 = Y[i];
 		
-		for (int xx=x0; xx<x1; xx++)
+		for (int xx=x0; xx<=x1; xx++)
 		{
-			for (int yy=y0; yy<y1; yy++)
+			for (int yy=y0; yy<=y1; yy++)
 			{
 				int val = screen[yy][xx];
 				if (val != 0)

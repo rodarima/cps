@@ -282,13 +282,13 @@ model.add(IloMinimize(env, L));
 
 \subsection{Compilation}
 
+To compile, under the \texttt{src/} directory, type \texttt{make}.
+
 \subsection{Running}
 
-For compiling, use \texttt{make} in the \texttt{src/} directory. The program 
-\texttt{src/lp} reads the input file from the standard input.
-
-To solve a specific instance use \texttt{src/lp < in/instance.in}. To run all 
-the instances in \texttt{in/} use the script \texttt{./run.sh lp}.
+The program \texttt{src/lp} reads the input file from the standard input. To 
+solve a specific instance use \texttt{src/lp < in/instance.in}. To run all the 
+instances in \texttt{in/} use the script \texttt{./run.sh lp}.
 
 \section{Automatic test}
 

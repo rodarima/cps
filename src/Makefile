@@ -14,6 +14,7 @@ LDLIBS += -lgecodedriver -lgecodesearch -lgecodeminimodel \
 # CPLEX options
 
 CXXFLAGS += -DIL_STD
+LDFLAGS += -L./lib
 LDLIBS += -lm -lpthread -lilocplex -lconcert -lcplex
 
 # Binaries

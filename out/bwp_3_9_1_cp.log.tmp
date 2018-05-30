@@ -1,9 +1,0 @@
-Time limit set to 115 seconds
-Number of threads set to 4
-Policy set to 1
-W = 3, L in [33, 39], num_boxes = 9
-L = 39	t = 0.000 s
-L = 37	t = 0.001 s
-L = 36	t = 0.135 s
-L = 35	t = 0.153 s
-L = 34	t = 6.138 s

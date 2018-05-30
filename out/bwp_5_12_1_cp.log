@@ -1,0 +1,14 @@
+Time limit set to 120 seconds
+Number of threads set to 1
+Policy set to 1
+W = 5, L in [22, 38], num_boxes = 12
+L = 38	t = 0.003 s
+L = 36	t = 0.004 s
+L = 35	t = 0.005 s
+L = 34	t = 0.007 s
+L = 33	t = 0.008 s
+L = 31	t = 0.009 s
+L = 30	t = 0.010 s
+L = 28	t = 0.011 s
+L = 27	t = 0.014 s
+L = 26	t = 0.014 s

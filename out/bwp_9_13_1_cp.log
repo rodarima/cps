@@ -1,0 +1,19 @@
+Time limit set to 40 seconds
+Number of threads set to 3
+Policy set to 1
+W = 9, L in [14, 34], num_boxes = 13
+L = 34	t = 0.001 s
+L = 33	t = 0.003 s
+L = 32	t = 0.004 s
+L = 31	t = 0.005 s
+L = 30	t = 0.005 s
+L = 29	t = 0.005 s
+L = 28	t = 0.007 s
+L = 27	t = 0.008 s
+L = 26	t = 0.012 s
+L = 25	t = 0.023 s
+Time limit reached
+Nodes explored:   3025002
+Failed nodes:     1512465
+Propagators used: 612316743
+Depth reached:    47

@@ -1,0 +1,12 @@
+Time limit set to 10 seconds
+Number of threads set to 1
+Policy set to 1
+W = 6, L in [3, 8], num_boxes = 3
+L = 7	t = 0.000 s
+L = 6	t = 0.000 s
+L = 4	t = 0.000 s
+L = 3	t = 0.000 s
+Nodes explored:   29
+Failed nodes:     10
+Propagators used: 760
+Depth reached:    11

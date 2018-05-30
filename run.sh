@@ -3,12 +3,13 @@
 # Default technology
 
 TECHS=lp
+PARAMS="$@"
 
-if [ "x$@" == "x" ]; then
+if [ -z "$PARAMS" ]; then
 	echo "Selecting default techonology '$TECHS'"
 	sleep 1
 else
-	TECHS=$@
+	TECHS=$PARAMS
 fi
 
 INDIR="in/"

@@ -1,11 +1,26 @@
 CXX = g++
-CXXFLAGS= -g -std=c++11
-LDFLAGS = -lgecodedriver -lgecodesearch -lgecodeminimodel \
+CXXFLAGS += -g
+
+# Gecode options
+
+# Modify the prefix to suit your instalation
+GECODE_PREFIX = /usr
+
+CXXFLAGS += -std=c++11 -I${GECODE_PREFIX}/include
+LDFLAGS += -L${GECODE_PREFIX}/lib
+LDLIBS += -lgecodedriver -lgecodesearch -lgecodeminimodel \
        -lgecodeint -lgecodekernel -lgecodesupport
 
-BINS = checker cp plot
+# CPLEX options
 
-all: $(BINS)
+CXXFLAGS += -DIL_STD
+LDLIBS += -lm -lpthread -lilocplex -lconcert -lcplex
+
+# Binaries
+
+BINS=plot checker lp cp
+
+all: ${BINS}
 
 clean:
-	rm -rf $(BINS)
+	rm ${BINS}

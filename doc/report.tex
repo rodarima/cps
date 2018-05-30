@@ -315,6 +315,23 @@ in \texttt{bwp\_$W$\_$N$\_$k$\_$t$.chk}.
 This behavior allows to determine which instances were incorrectly solved. If 
 the program doesn't terminate after the time limit of 120 seconds, it is killed, 
 and the solution is also considered incorrect, and \texttt{.tmp} is also 
-appended.
+appended. In case you want to stop the script, use Control+C to abort the 
+computation:
+%
+\begin{textcode}
+hop% ./run.sh cp
+Using solver cp
+bwp_3_2_1.in... SKIP
+bwp_3_3_1.in... SKIP
+bwp_3_4_1.in... SKIP
+bwp_3_5_1.in... SKIP
+bwp_3_6_1.in... SKIP
+bwp_3_7_1.in... SKIP
+bwp_3_8_1.in... SKIP
+bwp_3_9_1.in... OK
+bwp_3_10_1.in... OK
+bwp_3_11_1.in... ^C
+hop%
+\end{textcode}
 
 \end{document}

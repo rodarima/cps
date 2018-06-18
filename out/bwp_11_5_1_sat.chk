@@ -1,5 +1,8 @@
-Error: at least one rectangle of dimensions 1x4 is missing
+OK
 
+	         [m[48;5;1me[0m[m[48;5;1me[0m[m[48;5;1me[0m[m[48;5;1me[0m
+	  [m[48;5;1ma[0m[m[48;5;1ma[0m[m[48;5;1ma[0m[m[48;5;1ma[0m   [m[48;5;1mb[0m[m[48;5;1mb[0m[m[48;5;1mb[0m[m[48;5;1mb[0m
+	  [m[48;5;1mc[0m[m[48;5;1mc[0m[m[48;5;1mc[0m[m[48;5;1mc[0m   [m[48;5;1md[0m[m[48;5;1md[0m[m[48;5;1md[0m[m[48;5;1md[0m
 
 
 Input data:

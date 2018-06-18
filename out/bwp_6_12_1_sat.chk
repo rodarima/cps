@@ -1,8 +1,13 @@
-Error: at least one rectangle of dimensions 1x1 is missing
-Error: at least one rectangle of dimensions 1x2 is missing
-Error: at least one rectangle of dimensions 2x3 is missing
-Error: at least one rectangle of dimensions 3x3 is missing
+OK
 
+	  [m[48;5;3md[0m[m[48;5;3mb[0m[m[48;5;3ma[0m[m[48;5;2mc[0m[m[48;5;2mc[0m[m[48;5;2mc[0m
+	  [m[48;5;3md[0m[m[48;5;3mb[0m[m[48;5;3ma[0m[m[48;5;2mc[0m[m[48;5;2mc[0m[m[48;5;2mc[0m
+	  [m[48;5;2mb[0m[m[48;5;2mb[0m[m[48;5;2mb[0m[m[48;5;2mc[0m[m[48;5;2mc[0m[m[48;5;2mc[0m
+	  [m[48;5;2mb[0m[m[48;5;2mb[0m[m[48;5;2mb[0m[m[48;5;1ma[0m[m[48;5;1mb[0m[m[48;5;3me[0m
+	  [m[48;5;2mb[0m[m[48;5;2mb[0m[m[48;5;2mb[0m[m[48;5;3mf[0m [m[48;5;3me[0m
+	  [m[48;5;2ma[0m[m[48;5;2ma[0m[m[48;5;2ma[0m[m[48;5;3mf[0m[m[48;5;4ma[0m[m[48;5;4ma[0m
+	  [m[48;5;2ma[0m[m[48;5;2ma[0m[m[48;5;2ma[0m[m[48;5;3mc[0m[m[48;5;4ma[0m[m[48;5;4ma[0m
+	  [m[48;5;2ma[0m[m[48;5;2ma[0m[m[48;5;2ma[0m[m[48;5;3mc[0m[m[48;5;4ma[0m[m[48;5;4ma[0m
 
 
 Input data:

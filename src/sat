@@ -231,8 +231,9 @@ class Boxes:
 
 
 		# Deny all other posible cells as start point
-		#for x,y in non_starts:
-		#	self.exp &= Ri >> (-self.S[x,y,i])
+		for x,y in non_starts:
+			#self.exp &= Ri >> (-self.S[x,y,i])
+			p += [-Ri, -S[x,y,i]]
 
 		# But at most one
 		nstarts = len(starts)
@@ -351,6 +352,8 @@ class Boxes:
 			# We could reduce L
 			new_L, new_sol = self.search_solution(L[0:i])
 			if new_sol:
+				#print("At {} a better solution {} was found and returned".format(
+				#	limitL, new_L))
 				return new_L, new_sol
 			else:
 				return limitL, sol
@@ -372,6 +375,7 @@ class Boxes:
 		print("{}".format(self.L))
 
 		for i in range(self.N):
+			#print("box {}".format(i))
 			for x in range(self.W):
 				for y in range(self.L):
 					#print("S[{},{},{}]".format(x,y,i))
@@ -379,6 +383,7 @@ class Boxes:
 						placed = best_sol[self.S[x,y,i]]
 						rot = best_sol[self.R[i]]
 					except KeyError:
+						#print("Error at S[{},{},{}]".format(x,y,i))
 						continue
 
 					if placed:

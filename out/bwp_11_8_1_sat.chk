@@ -1,0 +1,9 @@
+Error: at least one rectangle of dimensions 3x4 is missing
+Error: at least one rectangle of dimensions 4x4 is missing
+
+
+
+Input data:
+
+[m[48;5;2m3x4[0m:3
+[m[48;5;1m4x4[0m:5

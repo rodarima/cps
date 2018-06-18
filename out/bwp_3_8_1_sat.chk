@@ -1,0 +1,17 @@
+Error: at least one rectangle of dimensions 1x1 is missing
+Error: at least one rectangle of dimensions 1x2 is missing
+Error: at least one rectangle of dimensions 1x3 is missing
+Error: at least one rectangle of dimensions 1x8 is missing
+Error: at least one rectangle of dimensions 2x2 is missing
+Error: at least one rectangle of dimensions 3x3 is missing
+
+
+
+Input data:
+
+[m[48;5;1m1x1[0m:1
+[m[48;5;5m1x2[0m:1
+[m[48;5;6m1x3[0m:1
+[m[48;5;2m1x8[0m:3
+[m[48;5;4m2x2[0m:1
+[m[48;5;3m3x3[0m:1

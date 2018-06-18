@@ -290,6 +290,134 @@ The program \texttt{src/lp} reads the input file from the standard input. To
 solve a specific instance use \texttt{src/lp < in/instance.in}. To run all the 
 instances in \texttt{in/} use the script \texttt{./run.sh lp}.
 
+\section{Propositional satisfiability}
+
+The Lingeling solver was used to find a solution to the box wrapping problem, by 
+encoding the constraints with logical clauses in CNF form. In order to generate 
+the format required by the solver, a python program reads the input and writes 
+to the solver standard input.
+
+\subsection{Variables}
+
+The rotation of each box $i$ is determined by the $R_i$ variable. In order to 
+encode the position of the box, we use the notion of starting cell. The starting 
+cell is the top-left coordinate of the box, and the variable $S[x,y,i]$ is true 
+if and only if the box $i$ is placed at $(x,y)$. Also, another auxiliary 
+variable, $P[x,y,i]$ determines if the cell $(x,y)$ is occupied with the box 
+$i$, in order to avoid overlapping.
+
+The $x$ value range is in $[0,W)$ and the $y$ in [$\min_L, \max_L]$. The value 
+$\min_L$ is computed from the area of the boxes, and determines the minimum 
+length that could be used for the given area. The maximum length $\max_L$ is 
+computed by placing all the boxes in a vertical line, rotated to reach the 
+maximum length.
+
+\subsection{Constraints}
+
+Two main groups of constraints are used, one group for each box and another for 
+each cell. An extra group is used to minimize $L$ in each call to the solver. 
+All the constraint are transformed to clauses in CNF form.
+
+\subsubsection{Box constraints}
+
+All these constraints are iterated for each box $i$ and they assume that the 
+rotation of the box is $r$, with $r=0$ for no rotation, and $r=1$ otherwise.
+We define the formula $RM(r,i)$ to be $\lnot R_i$ if $r = 0$, and $R_i$ if $r 
+=1$.
+
+The following constraints are added first assuming $r$ to be false. If the box 
+is not square, then we add the constraints again, but assuming $r$ true.  
+Otherwise, we just fix $R_i$ to be false, by adding $\lnot R_i$ to the 
+clausules.
+
+\paragraph{Domain of the box}
+Given a starting cell $(x,y)$ for the box $i$ with rotation $r$, all the cells 
+occupied with the box are defined with the set $\Omega_P(x,y,i,r)$. We define 
+the function $D(x,y,i,r)$ as a logic formula that enforces the cells occupied by 
+the box in $P[x,y,i]$ to be true:
+%
+$$D(x,y,i,r) = \forall (u,v) \in \Omega_P(x,y,i,r): S[x,y,i] \to P[u,v,i] $$
+%
+Then, we repeat the constraint for all the posible starting cells, given by the 
+set $\Omega_S(i,r)$. The implication only enforces the constraint when the 
+rotation of the box follows the assumption.
+%
+$$\forall (x,y) \in \Omega_S(i,r) : RM(r,i) \to D(x,y,i,r)$$
+
+
+
+\paragraph{Force exactly one start cell}
+In order to place the box, exactly one starting cell $S[x,y,i]$ must be true.  
+Assuming the rotation $r$, we first compute the posible starting cells in 
+$\Omega_S(i,r)$, then we enforce that at least one is true.
+%
+$$RM(r,i) \to \bigvee_{ (x,y) \in \Omega_S(i,r)} S[x,y,i]$$
+%
+In the other way, we must restrict the number of start cells to be at most one.  
+We can use the quadratic encoding to restrict $S[x,y,i]$. For all pairs of 
+sorted starting cells $s_j = (x_j, y_j)$ and $s_k = (x_k, y_k)$, with $j < k$, 
+we enforce that both cannot happen at the same time.
+%
+$$ R_i \to \lnot (S[x_j,y_j,i] \land S[x_k,y_k,i])$$
+%
+
+
+
+
+\paragraph{Deny start cell outside domain}
+
+The cells in the roll outside the start domain $\Omega_S(i,r)$ should be 
+enforced to be false.
+%
+$$ \forall (x,y) \notin \Omega_S(i,r) : RM(r,i) \to \lnot S(x,y,i,r) $$
+
+
+
+
+
+\subsubsection{Cell constraints}
+
+These constraints are placed for each cell $c$ of the roll.
+
+\paragraph{At most one cell occupied}
+
+We enforce each cell $c=(x,y)$ to be occupied by at most one box. We use the 
+quadratic encoding for each pair of boxes $i,j$, with $i < j$.
+%
+$$ \lnot (P[x,y,i] \land P[x,y,j]) $$
+
+\subsection{Extra constraints}
+
+In order to minimize the length of the roll $L$, we use the following approach: 
+We fix $L$ to a value $L'$ and use it as the length of the roll. If the solver 
+finds a solution we decrease $L'$ until the problem becomes unsatisfiable. The 
+last satisfiable solution is the one with minimum $L$.
+
+This search is performed by the binary search procedure, by spliting the values 
+of $L$ by half, and rejecting the half according to the result of the solver.
+%
+The extra constraints are added and removed from the problem at each try, and 
+disallow any box to be placed below the limit. We define $\Omega_L(L', \max_L)$ 
+to be the set of cells below the limit $L'$. Then we enforce that no cell of any 
+box can be placed at these cells.
+%
+$$\forall i, \forall (x,y) \in \Omega_L(L', \textrm{max}_L) : \lnot P[x,y,i]$$
+
+\subsection{Running}
+
+The solver \texttt{lingeling} must be installed and found via the 
+\texttt{\$PATH}, as well as python 3 with the \texttt{numpy} package. The 
+program \texttt{sat} reads the instance from the standard input, executes the 
+solver and writes the output to the standard output. To run all instances use 
+the script \texttt{./run.sh sat}.
+
+
+
+
+
+
+
+
 \section{Automatic test}
 
 In order to execute the solvers in all instances, a script was prepared for the 

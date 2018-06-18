@@ -48,7 +48,7 @@ for TECH in $TECHS; do
 
 		SOLVER_PID=$!
 
-		trap "kill -9 $SOLVER_PID; killall $TECH; exit 1" SIGINT
+		trap "pkill -9 -P $SOLVER_PID; exit 1" SIGINT
 
 		wait $!
 

@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import numpy as np
 import itertools
 import subprocess
@@ -8,10 +10,14 @@ class Problem:
 	def __init__(self):
 		self.varindex = 1
 		self.clauses = []
+		self.extras = []
 
 	def __iadd__(self, clause):
 		self.clauses.append(clause)
 		return self
+
+	def set_extra_clauses(self, extras):
+		self.extras = extras
 
 	def new_var(self):
 		var = self.varindex
@@ -32,11 +38,12 @@ class Solution:
 
 	def write_problem(self, f):
 		problem = self.problem
-		clauses = problem.clauses
+		clauses = problem.clauses + problem.extras
 		nclauses = len(clauses)
 		nvars = problem.varindex - 1
 		header = "p cnf {} {}\n".format(nvars, nclauses)
 		f.write(header.encode())
+		#sys.stderr.write(header)
 
 		for clause in clauses:
 			line = " "
@@ -44,7 +51,11 @@ class Solution:
 				line += " {}".format(lit)
 			line += " 0\n"
 			f.write(line.encode())
+			#sys.stderr.write(line)
 
+	def save(self, fn):
+		with open(fn, 'wb') as f:
+			self.write_problem(f)
 
 	def solve(self):
 		cmd = ["lingeling"]
@@ -55,7 +66,6 @@ class Solution:
 		stdin = proc.stdin
 		self.write_problem(stdin)
 		stdin.close()
-		proc.wait()
 
 		for line in proc.stdout:
 			line = line.decode().strip()
@@ -81,6 +91,7 @@ class Solution:
 		#print("Var {} is {}".format(key, self.vars[key]))
 		return self.vars[key]
 
+
 		
 
 
@@ -97,6 +108,7 @@ class Boxes:
 		num_boxes = 0
 		w = []
 		h = []
+		area = 0
 
 		max_L = 0
 
@@ -107,6 +119,7 @@ class Boxes:
 				num = int(parts[0])
 				wi = int(parts[1])
 				hi = int(parts[2])
+				area += wi * hi * num
 				w += [wi] * num
 				h += [hi] * num
 				max_L += num * max(wi, hi)
@@ -119,7 +132,10 @@ class Boxes:
 		self.h = h
 		self.N = num_boxes
 		self.L = max_L
+		self.maxL = max_L
+		self.minL = int(np.ceil(area / W))
 		self.W = W
+		#print("Starting L = {}".format(self.L))
 
 	def matrix3d(self, name, bounds):
 		var = np.empty(bounds, dtype='int')
@@ -232,7 +248,16 @@ class Boxes:
 
 	def box_constraint(self, i):
 		self.box_constraint_rotation(i, False)
-		self.box_constraint_rotation(i, True)
+		#self.box_constraint_rotation(i, True)
+
+		# Avoid rotation if needed
+		w, h = self.box_size(i, False)
+
+		if w == h:
+			self.p += [-self.R[i]]
+		else:
+			self.box_constraint_rotation(i, True)
+
 
 	def cell_constraint(self, cell):
 		x, y = cell
@@ -256,6 +281,7 @@ class Boxes:
 		W = self.W
 		L = self.L
 
+		#print("Building matrices with L={}".format(L))
 		self.R = self.matrix1d('R', [N])
 		self.P = self.matrix3d('P', [W, L, N])
 		self.S = self.matrix3d('S', [W, L, N])
@@ -289,34 +315,71 @@ class Boxes:
 
 		self.L -= 1
 
+	def constraint_length(self, limitL, add=True):
+		P = self.P
+		p = self.p
+
+		extras = []
+
+		if add:
+			for x in range(self.W):
+				for y in range(limitL, self.maxL):
+					for i in range(self.N):
+						extras.append([-P[x,y,i]])
+		
+		p.set_extra_clauses(extras)
+
+	def search_solution(self, L):
+		if L == []:
+			return -1, None
+
+		i = int(len(L)/2)
+		limitL = L[i]
+
+		print("Trying with max L = {}".format(limitL), file=sys.stderr)
+
+		self.constraint_length(limitL, add=True)
+		sol = Solution(self.p)
+		sol.solve()
+		self.constraint_length(limitL, add=False)
+
+		if sol.status == 'SATISFIABLE':
+			print('Found', file=sys.stderr)
+			if len(L) == 1:
+				return (limitL, sol)
+
+			# We could reduce L
+			new_L, new_sol = self.search_solution(L[0:i])
+			if new_sol:
+				return new_L, new_sol
+			else:
+				return limitL, sol
+
+		else:
+			print('Not found', file=sys.stderr)
+			# We could get the solution above i
+			return self.search_solution(L[i+1:])
+
 	def solve(self):
 
-		best_sol = None
+		Lvalues = list(range(self.minL, self.maxL+1))
+		limitL, sol = self.search_solution(Lvalues)
+		self.L = limitL
 
-		while True:
+		best_sol = sol
 
-			sol = Solution(self.p)
-			sol.solve()
-
-			if sol.status != 'SATISFIABLE': break
-
-			print('Found solution with L = {}'.format(self.L), file=sys.stderr)
-
-			best_sol = sol
-
-			self.reduce_length()
-
-		# Last reduction was not satisfiable, we need to increase L to the last
-		# value
-		self.L += 1
-
-		print("{} {}".format(self.W, self.L))
+		#print("{} {}".format(self.W, self.L))
+		print("{}".format(self.L))
 
 		for i in range(self.N):
 			for x in range(self.W):
 				for y in range(self.L):
-					placed = best_sol[self.S[x,y,i]]
-					rot = best_sol[self.R[i]]
+					#print("S[{},{},{}]".format(x,y,i))
+					try:
+						placed = best_sol[self.S[x,y,i]]
+						rot = best_sol[self.R[i]]
+					except KeyError:
+						continue
 
 					if placed:
 						w, h = self.box_size(i, rot)
